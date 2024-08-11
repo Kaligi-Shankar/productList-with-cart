@@ -4,6 +4,10 @@ let products = [];
 const cartItems = document.getElementById('cart-items');
 const cartCount = document.getElementById('cart-count');
 const cartTotal = document.getElementById('cart-total');
+const cartTotal2 = document.getElementById('cart-total2');
+const orderedItems = document.getElementById('ordered-items')
+const emptyCart = document.getElementById('empty-cart')
+const cartSummary = document.getElementById('cart-summary')
 
 const fetchingData = async () => {
     try {
@@ -33,12 +37,24 @@ const fetchingData = async () => {
 
          // Create a button for adding to cart
          const addingCart = document.createElement('button');
-        addingCart.textContent = 'Add to Cart';
-        // Add classes for styling
-        addingCart.className = 'btn btn-primary rounded-pill mb-4';
+         // Add classes for styling
+        addingCart.className = 'btn add-cart-btn rounded-pill mb-4';
+
+        const icon = document.createElement('img');
+            icon.src = './assets/images/icon-add-to-cart.svg'; // Replace with the path to your icon image
+            icon.alt = 'Cart Icon';
+            icon.style.width = '16px'; // Adjust the size as needed
+            icon.style.height = '16px'; // Adjust the size as needed
+            icon.style.marginRight = '8px';
+        addingCart.appendChild(icon);
+
+        addingCart.appendChild(document.createTextNode(' '));
+        addingCart.appendChild(document.createTextNode('Add to Cart'));
+        
+
         // Add onclick event
         addingCart.onclick = function(){
-            addToCart(item.namem)
+            addToCart(item.name.split(' ').join(''))
         }
         // Append the 'Add to Cart' button to the card body
         cardBody.appendChild(addingCart);
@@ -77,26 +93,64 @@ const fetchingData = async () => {
     }
   }
 
-  function addToCart(productId) {
-    const product = products.find(p => p.id === productId);
+  function addToCart(productName) {
+    const product = products.find(p => p.name.split(' ').join('') === productName);
     cart.push(product);
     renderCart();
 }
 
 function renderCart(){
-    cartItems.innerHTML = '';
+    
+    
+    if (cart.length === 0) {
+        
+        emptyCart.style.display = 'block'; // Show empty cart image
+        cartItems.style.display = 'none'; // Hide cart items list
+        cartSummary.style.display = 'none';
+        cartCount.textContent = 0;
+
+    }else{
+        
+        console.log('cart items', cart.length)
+        emptyCart.style.display = 'none'; // Hide empty cart image
+        cartItems.style.display = 'block';
+        cartSummary.style.display = 'block';
+        cartItems.innerHTML = '';
+        let total = 0;
+        cart.forEach((item, index) => {
+            const cartItem = document.createElement('li');
+            cartItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+            cartItem.innerHTML = `
+            <span>${item.name}</span>
+            <span>${item.price.toFixed(2)}</span>
+            <img src="./assets/images/icon-remove-item.svg" alt="delete" onclick="deleteHandler(${index})" style="cursor: pointer"></img>
+            `;
+            cartItems.appendChild(cartItem);
+            total += item.price
+        })
+        cartCount.textContent = cart.length;
+        cartTotal.textContent = `$${total.toFixed(2)}`;
+    }
+}
+
+function deleteHandler(index) {
+    cart.splice(index, 1);
+    renderCart();
+}
+function confirmOrder() {
+    orderedItems.innerHTML = '';
     let total = 0;
-    cart.forEach(item => {
+    cart.forEach((item, index) => {
         const cartItem = document.createElement('li');
         cartItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
         cartItem.innerHTML = `
         <span>${item.name}</span>
-        <span>${item.price.toFixed(2)}</span>`;
-        cartItems.appendChild(cartItem);
+        <span>${item.price.toFixed(2)}</span>
+        `;
+        orderedItems.appendChild(cartItem);
         total += item.price
     })
     cartCount.textContent = cart.length;
-    cartTotal.textContent = `$${total.toFixed(2)}`;
+    cartTotal2.textContent = `$${total.toFixed(2)}`;
 }
-
   fetchingData();

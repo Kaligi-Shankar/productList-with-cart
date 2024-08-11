@@ -1,0 +1,22 @@
+body{
+    margin: 10px;
+    box-sizing: border-box;
+}
+.custom-btn {
+    background-color: #c43c0e; /* Custom background color */
+    color: white; /* Custom text color */
+    border: none; /* Optional: remove border */
+}
+.custom-btn:hover {
+    background-color: #45a049; /* Custom hover color */
+}
+.add-cart-btn{
+    background: none;
+    border-color: black;
+    color: black;
+    font-weight: 600;
+}
+.add-cart-btn:hover{
+    border-color: #c43c0e;
+    color: #c43c0e;
+}
